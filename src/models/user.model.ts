@@ -2,7 +2,7 @@ import mongoose, { Schema, Types } from 'mongoose';
 
 interface UserAttributes {
   name: string;
-  phone: string;
+  phoneNumber: string;
 }
 
 interface UserModel extends mongoose.Model<UserDocument> {
@@ -11,7 +11,7 @@ interface UserModel extends mongoose.Model<UserDocument> {
 
 interface UserDocument extends mongoose.Document {
   name: string;
-  phone: string;
+  phoneNumber: string;
   createdAt: Date;
 }
 
@@ -25,7 +25,7 @@ const UserSchema = new Schema({
     required: true,
     validate: [
       (v:string) => {
-        return /^$\+\d{1,}/.test(v)
+        return /^\+\d{1,}$/.test(v)
       },
       '{PATH} must be a valid phone number (+xxxxxxxx)'
     ]
