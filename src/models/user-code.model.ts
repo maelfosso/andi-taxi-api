@@ -20,7 +20,13 @@ interface UserCodeDocument extends mongoose.Document {
 const UserCodeSchema = new Schema({
   code: {
     type: String,
-    required: true
+    required: true,
+    validate: [
+      (v:string) => {
+        return /^\d{4}$/.test(v)
+      },
+      '{PATH} must be a valid code of 4 digits (xxxx)'
+    ]
   },
   phoneNumber: {
     type: String,
@@ -34,6 +40,7 @@ const UserCodeSchema = new Schema({
   },
   expiredAt: {
     type: Date,
+    required: true,
   },
   createdAt: {
     type: Date,
