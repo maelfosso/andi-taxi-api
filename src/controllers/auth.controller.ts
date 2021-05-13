@@ -57,7 +57,6 @@ export const signUp = async (req: Request, res: Response, next: NextFunction) =>
 
 export const signIn = async (req: Request, res: Response) => {
   const { phoneNumber } = req.body;
-
   let existingUser;
   try {
     existingUser = await User.findOne({ phoneNumber });
@@ -79,7 +78,7 @@ export const signIn = async (req: Request, res: Response) => {
     throw new DatabaseError(`error when saving user code ${userCode}`);
   }
 
-  return res.status(201).json({ ...userCode });
+  return res.status(201).json({ ...userCode.toJSON() });
 }
 
 export const signCode = async (req: Request, res: Response) => {
