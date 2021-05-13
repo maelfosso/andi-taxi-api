@@ -17,6 +17,10 @@ describe("Test about UserCode model", () => {
     }
   });
 
+  afterAll(async () => {
+    await mongoose.connection.close();
+  });
+
   it ('creates and saves UserCode successfully', async () => {
     const valid = new UserCode({
       code: "1452",

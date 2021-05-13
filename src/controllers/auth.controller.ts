@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import jwt from 'jsonwebtoken';
 import { BadRequestError } from "../errors/bad-request-error";
 import { DatabaseError } from "../errors/database-error";
@@ -21,7 +21,7 @@ function makeCode(length: number) {
   return result.join('');
 }
 
-export const signUp = async (req: Request, res: Response) => {
+export const signUp = async (req: Request, res: Response, next: NextFunction) => {
   const { name, phoneNumber } = req.body;
   
   let existingUser;
@@ -39,18 +39,20 @@ export const signUp = async (req: Request, res: Response) => {
   try {
     await user.save();
   } catch (err) {
-    throw new DatabaseError(`error when saving user ${user}`);
+    throw new DatabaseError(`error when saving user ${user}: ${err}`);
   }
 
   const code = makeCode(4);
-  const userCode = new UserCode({ code, phoneNumber });
+  const d = new Date();
+  d.setSeconds(10)
+  const userCode = new UserCode({ code, phoneNumber, expiredAt: d });
   try {
     await userCode.save();
   } catch (err) {
-    throw new DatabaseError(`error when saving user code ${userCode}`);
+    throw new DatabaseError(`error when saving user code ${userCode}: ${err}`);
   }
 
-  return res.status(201).json({ ...userCode });
+  return res.status(201).json({ ...userCode.toJSON() });
 }
 
 export const signIn = async (req: Request, res: Response) => {

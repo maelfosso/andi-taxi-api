@@ -18,6 +18,10 @@ describe("Test about User model", () => {
 
   });
 
+  afterAll(async () => {
+    await mongoose.connection.close();
+  });
+
   it ('creates and saves User successfully', async () => {
     const valid = new User({
       name: "John Doe",
