@@ -83,7 +83,7 @@ export const signIn = async (req: Request, res: Response) => {
 
 export const signCode = async (req: Request, res: Response) => {
   const { phoneNumber, code } = req.body;
-
+  
   let existingUser;
   try {
     existingUser = await User.findOne({ phoneNumber });
@@ -94,14 +94,14 @@ export const signCode = async (req: Request, res: Response) => {
   if (!existingUser) {
     throw new BadRequestError(`No user with this phone number`);
   }
-
+  
   let existingUserCode;
   try {
     existingUserCode = await UserCode.findOne({ phoneNumber });
   } catch (err) {
     throw new DatabaseError(`error when fetching the user code ${phoneNumber}`);
   }
-
+  
   if (!existingUserCode) {
     throw new BadRequestError(`No user code found`);
   }

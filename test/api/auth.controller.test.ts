@@ -3,7 +3,7 @@ import request from 'supertest';
 import faker from 'faker';
 import app from "../../src/app";
 import { User, UserAttributes } from '../../src/models/user.model';
-import { UserCode } from '../../src/models/user-code.model';
+import { UserCode, UserCodeDocument } from '../../src/models/user-code.model';
 
 const { MONGODB_URI, MONGODB_DBNAME } = process.env;
 const http = request(app);
@@ -156,16 +156,88 @@ describe("AUTHENTICATION Testings", () => {
   });
 
   describe('SIGN CODE /api/auth/signcode', () => {
-    it ('sign in correctly the user', () => {
-
+    afterEach(async () => {
+      await User.deleteMany({});
+      await UserCode.deleteMany({});
     });
 
-    it ('returns 404 if the phoneNumber is not correct', async () => {
+    it ('returns 400 if the user with that phone number does not exists', async () => {
+      const valid = {
+        phoneNumber: '+8320932',
+        code: '2832'
+      }
+      const d = new Date();
+      d.setSeconds(d.getSeconds() + 30);
+      let userCode: UserCodeDocument = UserCode.build({
+        code: valid.code,
+        phoneNumber: valid.phoneNumber,
+        expiredAt: d
+      });
+      await userCode.save();
 
+      const response = await http.post('/api/auth/signcode').send(valid);
+
+      expect(response.status).toBe(400);
     });
 
-    it ('returns 404 if the phone number does not exists', async () => {
+    it ('sign in correctly the user', async () => {
+      const valid = {
+        phoneNumber: '+8320932',
+        code: '2832'
+      }
 
+      const user = User.build({
+        name: faker.name.findName(),
+        phoneNumber: valid.phoneNumber
+      });
+      await user.save();
+
+      const d = new Date();
+      d.setSeconds(d.getSeconds() + 30);
+      let userCode: UserCodeDocument = UserCode.build({
+        code: valid.code,
+        phoneNumber: valid.phoneNumber,
+        expiredAt: d
+      });
+      await userCode.save();
+
+      const response = await http.post('/api/auth/signcode').send(valid);
+
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty('user');
+      expect(response.body).toHaveProperty('token');
+      expect(response.body.user).toHaveProperty('name');
+      expect(response.body.user).toHaveProperty('phoneNumber');
+      expect(response.body.user).toHaveProperty('id');
+      expect(response.body).not.toHaveProperty('code');
+
+      userCode = await UserCode.findOne({ phoneNumber: valid.phoneNumber }) as UserCodeDocument ;
+      expect(userCode).toBeNull();
+    });
+
+    it ('returns 400 if the code does not match', async () => {
+      const valid = {
+        phoneNumber: '+8320932',
+        code: '2832'
+      }
+
+      const user = User.build({
+        name: faker.name.findName(),
+        phoneNumber: valid.phoneNumber
+      });
+      await user.save();
+
+      const d = new Date();
+      d.setSeconds(d.getSeconds() + 30);
+      let userCode: UserCodeDocument = UserCode.build({
+        code: '4856',
+        phoneNumber: valid.phoneNumber,
+        expiredAt: d
+      });
+      await userCode.save();
+
+      const response = await http.post('/api/auth/signcode').send(valid);
+      expect(response.status).toBe(400);
     });
   });
 

@@ -3,7 +3,7 @@ import mongoose, { Schema } from 'mongoose';
 interface UserCodeAttributes {
   code: string;
   phoneNumber: string;
-  expiredAt: string;
+  expiredAt: Date;
 }
 
 interface UserCodeModel extends mongoose.Model<UserCodeDocument> {
