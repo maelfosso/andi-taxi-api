@@ -1,0 +1,27 @@
+version: "3.6"
+
+services:
+  api:
+    build: .
+    ports: 
+      - "3000:3000"
+    depends_on:
+      - db
+    environment: 
+      - MONGODB_URI=mongodb://db
+      - MONGODB_PORT=27017
+      - MONGODB_DBNAME=andi-taxi
+    networks:
+      - api
+    volumes: 
+      - .:/app
+  db:
+    image: mongo
+    ports: 
+      - "27017:27017"
+    networks:
+      - api
+
+networks:
+  api:
+ 
