@@ -68,7 +68,9 @@ export const signIn = async (req: Request, res: Response) => {
   }
 
   const code = makeCode(4);
-  const userCode = new UserCode({ code, phoneNumber });
+  const d = new Date();
+  d.setSeconds(d.getSeconds() + 30);
+  const userCode = new UserCode({ code, phoneNumber, expiredAt: d });
   try {
     await userCode.save();
   } catch (err) {
@@ -105,6 +107,10 @@ export const signCode = async (req: Request, res: Response) => {
 
   if (existingUserCode.code !== code) {
     throw new BadRequestError(`Code doesn't match`);
+  }
+
+  if (existingUserCode.expiredAt.getTime() < Date.now()) {
+    throw new BadRequestError(`Code has expired`)
   }
 
   const user = {

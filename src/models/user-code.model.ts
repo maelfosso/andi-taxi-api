@@ -3,6 +3,7 @@ import mongoose, { Schema } from 'mongoose';
 interface UserCodeAttributes {
   code: string;
   phoneNumber: string;
+  expiredAt: string;
 }
 
 interface UserCodeModel extends mongoose.Model<UserCodeDocument> {
@@ -12,6 +13,7 @@ interface UserCodeModel extends mongoose.Model<UserCodeDocument> {
 interface UserCodeDocument extends mongoose.Document {
   code: string;
   phoneNumber: string;
+  expiredAt: Date;
   createdAt: Date;
 }
 
@@ -29,6 +31,9 @@ const UserCodeSchema = new Schema({
       },
       '{PATH} must be a valid phone number (+xxxxxxxx)'
     ]
+  },
+  expiredAt: {
+    type: Date,
   },
   createdAt: {
     type: Date,
