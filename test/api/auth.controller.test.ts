@@ -147,7 +147,7 @@ describe("AUTHENTICATION Testings", () => {
       });
       await user.save();
       const response = await http.post('/api/auth/signin').send(valid);
-      console.log(response.body);
+      
       expect(response.status).toBe(400);
       expect(response.body).toHaveProperty('errors');
       expect(response.body.errors).toHaveLength(1);
