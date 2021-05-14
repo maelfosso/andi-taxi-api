@@ -11,6 +11,7 @@ services:
       - MONGODB_URI=mongodb://db
       - MONGODB_PORT=27017
       - MONGODB_DBNAME=andi-taxi
+      - JWT_PRIVATE_KEY=secret
     networks:
       - api
     volumes: 

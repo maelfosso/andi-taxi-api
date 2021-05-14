@@ -23,7 +23,7 @@ function makeCode(length: number) {
 
 export const signUp = async (req: Request, res: Response, next: NextFunction) => {
   const { name, phoneNumber } = req.body;
-  
+  console.log('signUp ', name, phoneNumber);
   let existingUser;
   try {
     existingUser = await User.findOne({ phoneNumber });
@@ -110,9 +110,9 @@ export const signCode = async (req: Request, res: Response) => {
     throw new BadRequestError(`Code doesn't match`);
   }
 
-  if (existingUserCode.expiredAt.getTime() < Date.now()) {
-    throw new BadRequestError(`Code has expired`)
-  }
+  // if (existingUserCode.expiredAt.getTime() < Date.now()) {
+  //   throw new BadRequestError(`Code has expired`)
+  // }
 
   const user = {
     id: existingUser.id,
@@ -122,11 +122,12 @@ export const signCode = async (req: Request, res: Response) => {
 
   const token = jwt.sign(user, JWT_PRIVATE_KEY!);
 
-  try {
-    await existingUserCode.remove();
-  } catch (err) {
-    throw new DatabaseError(`error when deleting the user code`);
-  }
+  // try {
+  //   await UserCode.findOneAndDelete({ phoneNumber })
+  // } catch (err) {
+  //   console.log('deleting usercode error');
+  //   throw new DatabaseError(`error when deleting the user code`);
+  // }
 
   return res.status(200).json({
     user,
