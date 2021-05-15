@@ -3,8 +3,8 @@ import jwt from 'jsonwebtoken';
 import { BadRequestError } from "../errors/bad-request-error";
 import { DatabaseError } from "../errors/database-error";
 import { UserCode } from "../models/user-code.model";
-import { User } from "../models/user.model";
-import { Car, Driver } from "../models/driver.model";
+import { User, UserAttributes } from "../models/user.model";
+import { Car, Driver, DriverAttributes } from "../models/driver.model";
 
 const { JWT_PRIVATE_KEY } = process.env;
 
@@ -57,8 +57,12 @@ export const signUpClient = async (req: Request, res: Response) => {
 }
 
 export const signUpDriver = async (req: Request, res: Response) => {
-  const { name, phoneNumber, address, car }
-    : { name: string; phoneNumber: string; address: string, car: Car } = req.body;
+  // const { name, phoneNumber, address, car }
+  //   : { name: string; phoneNumber: string; address: string, car: Car } = req.body;
+  const { name, phoneNumber,
+    rcIdentificationNumber, residenceAddress, realResidenceAddress,
+    car
+  } : UserAttributes & DriverAttributes = req.body;
 
   let existingUser
   try {
@@ -73,13 +77,16 @@ export const signUpDriver = async (req: Request, res: Response) => {
 
   let existingDriver;
   try {
-    existingDriver = await Driver.findOne({ 'car.identificationNumber': car.identificationNumber });
+    existingDriver = await Driver.findOne({ '$or': [
+      { "car.registrationNumber": car.registrationNumber },
+      { rcIdentificationNumber },
+    ]});
   } catch (err) {
-    throw new DatabaseError(`error when fetching the driver ${car.identificationNumber}`);
+    throw new DatabaseError(`error when fetching the driver ${car.registrationNumber}`);
   }
 
   if (existingDriver) {
-    throw new BadRequestError(`Car already in use`);
+    throw new BadRequestError(`Car or RC Identification Number already in use`);
   }
 
   const user = User.build({ name, phoneNumber });
@@ -89,7 +96,12 @@ export const signUpDriver = async (req: Request, res: Response) => {
     throw new DatabaseError(`error when saving user ${user}: ${err}`);
   }
 
-  const driver = Driver.build({ address, car, user: user.id });
+  const driver = Driver.build({ 
+    rcIdentificationNumber, 
+    residenceAddress, realResidenceAddress,
+    car, 
+    user: user.id 
+  });
   try {
     await driver.save();
   } catch (err) {

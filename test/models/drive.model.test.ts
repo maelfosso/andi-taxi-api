@@ -33,23 +33,26 @@ describe("Test about Driver model", () => {
 
   it("creates and saves Driver successfully", async () => {
     const data = new Driver({
-      address: faker.address.streetName(),
+      rcIdentificationNumber: faker.random.alphaNumeric(9),
+      residenceAddress: faker.address.streetName(),
+      realResidenceAddress: faker.address.streetAddress(),
       car: {
-        identificationNumber: faker.random.alphaNumeric(7),
+        registrationNumber: faker.random.alphaNumeric(7),
         class: 'Berline'
       },
       user: new mongoose.Types.ObjectId()
     });
-    const saved = await data.save();
 
+    const saved = await data.save();
+    
     expect(saved._id).toBeDefined();
-    expect(saved.address).toBe(data.address);
+    expect(saved.residenceAddress).toBe(data.residenceAddress);
     expect(saved.user).toBe(data.user);
   });
 
   it('rejects a Driver if any of the required fields is missing', async () => {
     const invalid = new Driver({
-      address: '',
+      residenceAddress: '',
       car: '',
       user: ''
     });
@@ -58,8 +61,10 @@ describe("Test about Driver model", () => {
 
     expect(error).toBeDefined();
     expect(error?.errors['user']).toBeDefined();
-    expect(error?.errors['address']).toBeDefined();
-    expect(error?.errors['car.identificationNumber']).toBeDefined();
+    expect(error?.errors['rcIdentificationNumber']).toBeDefined();
+    expect(error?.errors['residenceAddress']).toBeDefined();
+    expect(error?.errors['realResidenceAddress']).toBeDefined();
+    expect(error?.errors['car.registrationNumber']).toBeDefined();
     expect(error?.errors['car.class']).toBeDefined();
 
   });

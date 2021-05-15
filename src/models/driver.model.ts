@@ -1,15 +1,17 @@
 import mongoose, { Schema, Types } from 'mongoose';
 
 interface Car {
-  identificationNumber: string,
+  registrationNumber: string,
   class: string,
-  photos: string[]
+  photos?: string[]
 };
 
 interface DriverAttributes {
-  address: string,
+  rcIdentificationNumber: string,
+  residenceAddress: string,
+  realResidenceAddress: string,
   car: Car,
-  user: Types.ObjectId
+  user?: Types.ObjectId
 }
 
 interface DriverModel extends mongoose.Model<DriverDocument> {
@@ -17,22 +19,28 @@ interface DriverModel extends mongoose.Model<DriverDocument> {
 }
 
 interface DriverDocument extends mongoose.Document {
-  address: string,
-  car: {
-    identificationNumber: string,
-    class: string,
-    photos?: string[]
-  },
-  user: mongoose.Schema.Types.ObjectId
+  rcIdentificationNumber: string,
+  residenceAddress: string,
+  realResidenceAddress: string,
+  car: Car,
+  user: Types.ObjectId
 }
 
 const DriverSchema = new Schema({
-  address: {
+  rcIdentificationNumber: {
+    type: String,
+    required: true,
+  },
+  residenceAddress: {
+    type: String,
+    required: true
+  },
+  realResidenceAddress: {
     type: String,
     required: true
   },
   car: {
-    identificationNumber: {
+    registrationNumber: {
       type: String,
       required: true
     },

@@ -36,9 +36,11 @@ router.post(
   [
     body('name').notEmpty().withMessage('Name must be provided'),
     body('phoneNumber').notEmpty().withMessage('Phone number must be provided'),
-    body('address').notEmpty().withMessage('Address number must be provided'),
+    body('rcIdentificationNumber').notEmpty().withMessage('RC Identification number must be provided'),
+    body('residenceAddress').notEmpty().withMessage('Residence address must be provided'),
+    body('realResidenceAddress').notEmpty().withMessage('Real Residence address must be provided'),
     body('car').notEmpty().withMessage('Car number must be provided'),
-    body('car.identificationNumber').notEmpty().withMessage('Car identification number must be provided'),
+    body('car.registrationNumber').notEmpty().withMessage('Car registration number must be provided'),
     body('car.class').notEmpty().withMessage('Car class must be provided'),
   ],
   validateRequest,

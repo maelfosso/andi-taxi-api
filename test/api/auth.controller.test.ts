@@ -4,6 +4,7 @@ import faker from 'faker';
 import app from "../../src/app";
 import { User, UserAttributes } from '../../src/models/user.model';
 import { UserCode, UserCodeDocument } from '../../src/models/user-code.model';
+import { DriverAttributes, Driver } from '../../src/models/driver.model';
 
 const { MONGODB_URI, MONGODB_DBNAME } = process.env;
 const http = request(app);
@@ -28,7 +29,7 @@ describe("AUTHENTICATION Testings", () => {
     await mongoose.connection.close();
   });
 
-  describe('SIGN UP /api/auth/signup/client', () => {
+  describe('SIGN UP CLIENT /api/auth/signup/client', () => {
     
     it ('creates an user', async () => {
       const valid: UserAttributes = {
@@ -94,6 +95,89 @@ describe("AUTHENTICATION Testings", () => {
         phoneNumber: user.phoneNumber
       };
       const response = await http.post('/api/auth/signup/client').send(invalid);
+
+      expect(response.status).toBe(400);
+      expect(response.body).toHaveProperty('errors');
+      expect(response.body.errors).toHaveLength(1);
+    });
+
+  });
+
+  describe('SIGN UP DRIVER /api/auth/signup/driver', () => {
+    
+    it ('creates a driver', async () => {
+      const valid: UserAttributes & DriverAttributes = {
+        name: faker.name.findName(),
+        phoneNumber: faker.phone.phoneNumber('+#########'),
+        rcIdentificationNumber: faker.random.alphaNumeric(9),
+        residenceAddress: faker.address.streetName(),
+        realResidenceAddress: faker.address.streetAddress(),
+        car: {
+          registrationNumber: faker.random.alphaNumeric(7),
+          class: 'Berline'
+        }
+      };
+      const response = await http.post('/api/auth/signup/driver').send(valid);
+
+      expect(response.status).toBe(201);
+      expect(response.body).not.toHaveProperty('name');
+      expect(response.body).toHaveProperty('phoneNumber');
+      expect(response.body).toHaveProperty('code');
+      expect(response.body["code"]).toHaveLength(4);
+    });
+
+    it ('returns 400 if the name user is empty or invalid', async () => {
+      const invalid: UserAttributes & DriverAttributes = {
+        name: '',
+        phoneNumber: '',
+        rcIdentificationNumber: faker.random.alphaNumeric(9),
+        residenceAddress: '',
+        realResidenceAddress: '',
+        car: {
+          registrationNumber: '',
+          class: 'Berline'
+        }
+      };
+      const response = await http.post('/api/auth/signup/driver').send(invalid);
+
+      expect(response.status).toBe(400);
+      expect(response.body).toHaveProperty('errors');
+      expect(response.body.errors).toHaveLength(5);
+      expect(response.body.errors[0].field).toBe('name');
+    });
+
+    it ('returns 400 if phoneNumber already exists', async () => {
+      const user = User.build({
+        name: faker.name.findName(),
+        phoneNumber: faker.phone.phoneNumber('+#########'),
+      });
+      await user.save();
+      
+      const driver = Driver.build({
+        rcIdentificationNumber: faker.random.alphaNumeric(9),
+        residenceAddress: faker.address.streetName(),
+        realResidenceAddress: faker.address.streetAddress(),
+        car: {
+          registrationNumber: faker.random.alphaNumeric(7),
+          class: 'Berline'
+        },
+        user: user.id
+      });
+
+      await driver.save();
+
+      let invalid: UserAttributes & DriverAttributes = {
+        name: faker.name.findName(),
+        phoneNumber: user.phoneNumber,
+        rcIdentificationNumber: faker.random.alphaNumeric(9),
+        residenceAddress: faker.address.streetName(),
+        realResidenceAddress: faker.address.streetAddress(),
+        car: {
+          registrationNumber: faker.random.alphaNumeric(7),
+          class: 'Berline'
+        },
+      };
+      const response = await http.post('/api/auth/signup/driver').send(invalid);
 
       expect(response.status).toBe(400);
       expect(response.body).toHaveProperty('errors');
