@@ -34,7 +34,7 @@ describe("INTEGRATION TESTING AUTHENTICATION", () => {
       phoneNumber: faker.phone.phoneNumber('+########')
     }
 
-    let response = await http.post('/api/auth/signup').send(validUser);
+    let response = await http.post('/api/auth/signup/client').send(validUser);
 
     expect(response.status).toBe(201);
     expect(response.body).toHaveProperty('code');
@@ -51,7 +51,7 @@ describe("INTEGRATION TESTING AUTHENTICATION", () => {
     }
 
     response = await http.post('/api/auth/signcode').send(validCode);
-    
+    console.log(response.body);
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty('user');
     expect(response.body).toHaveProperty('token');

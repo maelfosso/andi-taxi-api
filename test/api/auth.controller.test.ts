@@ -28,14 +28,14 @@ describe("AUTHENTICATION Testings", () => {
     await mongoose.connection.close();
   });
 
-  describe('SIGN UP /api/auth/signup', () => {
+  describe('SIGN UP /api/auth/signup/client', () => {
     
     it ('creates an user', async () => {
       const valid: UserAttributes = {
         name: faker.name.findName(),
         phoneNumber: faker.phone.phoneNumber('+#########')
       };
-      const response = await http.post('/api/auth/signup').send(valid);
+      const response = await http.post('/api/auth/signup/client').send(valid);
 
       expect(response.status).toBe(201);
       expect(response.body).not.toHaveProperty('name');
@@ -49,7 +49,7 @@ describe("AUTHENTICATION Testings", () => {
         name: '',
         phoneNumber: faker.phone.phoneNumber('+#########')
       };
-      const response = await http.post('/api/auth/signup').send(invalid);
+      const response = await http.post('/api/auth/signup/client').send(invalid);
 
       expect(response.status).toBe(400);
       expect(response.body).toHaveProperty('errors');
@@ -62,7 +62,7 @@ describe("AUTHENTICATION Testings", () => {
         name: faker.name.findName(),
         phoneNumber: faker.phone.phoneNumber()
       };
-      const response = await http.post('/api/auth/signup').send(invalid);
+      const response = await http.post('/api/auth/signup/client').send(invalid);
       expect(response.status).toBe(500);
       expect(response.body).toHaveProperty('errors');
       expect(response.body.errors).toHaveLength(1);
@@ -73,7 +73,7 @@ describe("AUTHENTICATION Testings", () => {
         name: faker.name.findName(),
         phoneNumber: ''
       };
-      const response = await http.post('/api/auth/signup').send(invalid);
+      const response = await http.post('/api/auth/signup/client').send(invalid);
 
       expect(response.status).toBe(400);
       expect(response.body).toHaveProperty('errors');
@@ -93,7 +93,7 @@ describe("AUTHENTICATION Testings", () => {
         name: faker.name.findName(),
         phoneNumber: user.phoneNumber
       };
-      const response = await http.post('/api/auth/signup').send(invalid);
+      const response = await http.post('/api/auth/signup/client').send(invalid);
 
       expect(response.status).toBe(400);
       expect(response.body).toHaveProperty('errors');

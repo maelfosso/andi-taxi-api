@@ -124,7 +124,7 @@ export const signIn = async (req: Request, res: Response) => {
 
   const code = makeCode(4);
   const d = new Date();
-  d.setSeconds(d.getSeconds() + 30);
+  d.setSeconds(d.getSeconds() + 60);
   const userCode = new UserCode({ code, phoneNumber, expiredAt: d });
   try {
     await userCode.save();
@@ -165,6 +165,7 @@ export const signCode = async (req: Request, res: Response) => {
   }
 
   if (existingUserCode.expiredAt.getTime() < Date.now()) {
+    console.log('Code has expired ', existingUserCode.expiredAt, new Date());
     throw new BadRequestError(`Code has expired`)
   }
 
