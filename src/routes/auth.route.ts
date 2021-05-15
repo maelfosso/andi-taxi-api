@@ -18,7 +18,7 @@ router.post(
 );
 
 router.post(
-  '/api/auth/signup', 
+  '/api/auth/signup/client', 
   [
     body('name')
       .notEmpty()
@@ -28,7 +28,21 @@ router.post(
       .withMessage('Phone number must be provided')
   ],
   validateRequest,
-  auth.signUp
+  auth.signUpClient
+);
+
+router.post(
+  '/api/auth/signup/driver', 
+  [
+    body('name').notEmpty().withMessage('Name must be provided'),
+    body('phoneNumber').notEmpty().withMessage('Phone number must be provided'),
+    body('address').notEmpty().withMessage('Address number must be provided'),
+    body('car').notEmpty().withMessage('Car number must be provided'),
+    body('car.identificationNumber').notEmpty().withMessage('Car identification number must be provided'),
+    body('car.class').notEmpty().withMessage('Car class must be provided'),
+  ],
+  validateRequest,
+  auth.signUpDriver
 );
 
 router.post(

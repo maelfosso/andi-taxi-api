@@ -34,7 +34,7 @@ describe("Test about Driver model", () => {
   it("creates and saves Driver successfully", async () => {
     const data = new Driver({
       address: faker.address.streetName(),
-      auto: {
+      car: {
         identificationNumber: faker.random.alphaNumeric(7),
         class: 'Berline'
       },
@@ -50,7 +50,7 @@ describe("Test about Driver model", () => {
   it('rejects a Driver if any of the required fields is missing', async () => {
     const invalid = new Driver({
       address: '',
-      auto: '',
+      car: '',
       user: ''
     });
 
@@ -59,8 +59,8 @@ describe("Test about Driver model", () => {
     expect(error).toBeDefined();
     expect(error?.errors['user']).toBeDefined();
     expect(error?.errors['address']).toBeDefined();
-    expect(error?.errors['auto.identificationNumber']).toBeDefined();
-    expect(error?.errors['auto.class']).toBeDefined();
+    expect(error?.errors['car.identificationNumber']).toBeDefined();
+    expect(error?.errors['car.class']).toBeDefined();
 
   });
 });

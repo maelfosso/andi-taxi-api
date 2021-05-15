@@ -1,12 +1,14 @@
 import mongoose, { Schema, Types } from 'mongoose';
 
+interface Car {
+  identificationNumber: string,
+  class: string,
+  photos: string[]
+};
+
 interface DriverAttributes {
   address: string,
-  auto: {
-    identificationNumber: string,
-    class: string,
-    photos: string[]
-  },
+  car: Car,
   user: Types.ObjectId
 }
 
@@ -16,7 +18,7 @@ interface DriverModel extends mongoose.Model<DriverDocument> {
 
 interface DriverDocument extends mongoose.Document {
   address: string,
-  auto: {
+  car: {
     identificationNumber: string,
     class: string,
     photos?: string[]
@@ -29,7 +31,7 @@ const DriverSchema = new Schema({
     type: String,
     required: true
   },
-  auto: {
+  car: {
     identificationNumber: {
       type: String,
       required: true
@@ -60,4 +62,4 @@ DriverSchema.statics.build = (attrs: DriverAttributes) => {
 
 const Driver = mongoose.model<DriverDocument, DriverModel>('Driver', DriverSchema);
 
-export { Driver, DriverDocument, DriverAttributes };
+export { Car, Driver, DriverDocument, DriverAttributes };

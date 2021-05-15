@@ -4,6 +4,7 @@ import { BadRequestError } from "../errors/bad-request-error";
 import { DatabaseError } from "../errors/database-error";
 import { UserCode } from "../models/user-code.model";
 import { User } from "../models/user.model";
+import { Car, Driver } from "../models/driver.model";
 
 const { JWT_PRIVATE_KEY } = process.env;
 
@@ -21,7 +22,7 @@ function makeCode(length: number) {
   return result.join('');
 }
 
-export const signUp = async (req: Request, res: Response, next: NextFunction) => {
+export const signUpClient = async (req: Request, res: Response) => {
   const { name, phoneNumber } = req.body;
 
   let existingUser;
@@ -40,6 +41,59 @@ export const signUp = async (req: Request, res: Response, next: NextFunction) =>
     await user.save();
   } catch (err) {
     throw new DatabaseError(`error when saving user ${user}: ${err}`);
+  }
+
+  const code = makeCode(4);
+  const d = new Date();
+  d.setSeconds(10)
+  const userCode = new UserCode({ code, phoneNumber, expiredAt: d });
+  try {
+    await userCode.save();
+  } catch (err) {
+    throw new DatabaseError(`error when saving user code ${userCode}: ${err}`);
+  }
+
+  return res.status(201).json({ ...userCode.toJSON() });
+}
+
+export const signUpDriver = async (req: Request, res: Response) => {
+  const { name, phoneNumber, address, car }
+    : { name: string; phoneNumber: string; address: string, car: Car } = req.body;
+
+  let existingUser
+  try {
+    existingUser = await User.findOne({ phoneNumber });
+  } catch (err) {
+    throw new DatabaseError(`error when fetching the user ${phoneNumber}`);
+  }
+
+  if (existingUser) {
+    throw new BadRequestError(`Phone number in use`);
+  }
+
+  let existingDriver;
+  try {
+    existingDriver = await Driver.findOne({ 'car.identificationNumber': car.identificationNumber });
+  } catch (err) {
+    throw new DatabaseError(`error when fetching the driver ${car.identificationNumber}`);
+  }
+
+  if (existingDriver) {
+    throw new BadRequestError(`Car already in use`);
+  }
+
+  const user = User.build({ name, phoneNumber });
+  try {
+    await user.save();
+  } catch (err) {
+    throw new DatabaseError(`error when saving user ${user}: ${err}`);
+  }
+
+  const driver = Driver.build({ address, car, user: user.id });
+  try {
+    await driver.save();
+  } catch (err) {
+    throw new DatabaseError(`error when saving driver ${driver}: ${err}`);
   }
 
   const code = makeCode(4);
@@ -114,11 +168,19 @@ export const signCode = async (req: Request, res: Response) => {
     throw new BadRequestError(`Code has expired`)
   }
 
-  const user = {
+  let user = {
     id: existingUser.id,
     name: existingUser.name,
     phoneNumber
   };
+
+  let driver = null;
+
+  try {
+    driver = await Driver.findOne({ user: existingUser.id });
+  } catch (err) {
+    throw new DatabaseError(`error when fetching driving `);
+  }
 
   const token = jwt.sign(user, JWT_PRIVATE_KEY!);
 
@@ -130,6 +192,7 @@ export const signCode = async (req: Request, res: Response) => {
 
   return res.status(200).json({
     user,
+    ...driver?.toJSON(),
     token
   });
 } 
