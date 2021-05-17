@@ -41,7 +41,7 @@ router.post(
     body('realResidenceAddress').notEmpty().withMessage('Real Residence address must be provided'),
     body('car').notEmpty().withMessage('Car number must be provided'),
     body('car.registrationNumber').notEmpty().withMessage('Car registration number must be provided'),
-    body('car.class').notEmpty().withMessage('Car class must be provided'),
+    body('car.model').notEmpty().withMessage('Car model must be provided'),
   ],
   validateRequest,
   auth.signUpDriver

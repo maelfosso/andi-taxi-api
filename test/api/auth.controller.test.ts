@@ -114,7 +114,7 @@ describe("AUTHENTICATION Testings", () => {
         realResidenceAddress: faker.address.streetAddress(),
         car: {
           registrationNumber: faker.random.alphaNumeric(7),
-          class: 'Berline'
+          model: 'Berline'
         }
       };
       const response = await http.post('/api/auth/signup/driver').send(valid);
@@ -135,7 +135,7 @@ describe("AUTHENTICATION Testings", () => {
         realResidenceAddress: '',
         car: {
           registrationNumber: '',
-          class: 'Berline'
+          model: 'Berline'
         }
       };
       const response = await http.post('/api/auth/signup/driver').send(invalid);
@@ -159,7 +159,7 @@ describe("AUTHENTICATION Testings", () => {
         realResidenceAddress: faker.address.streetAddress(),
         car: {
           registrationNumber: faker.random.alphaNumeric(7),
-          class: 'Berline'
+          model: 'Berline'
         },
         user: user.id
       });
@@ -174,7 +174,7 @@ describe("AUTHENTICATION Testings", () => {
         realResidenceAddress: faker.address.streetAddress(),
         car: {
           registrationNumber: faker.random.alphaNumeric(7),
-          class: 'Berline'
+          model: 'Berline'
         },
       };
       const response = await http.post('/api/auth/signup/driver').send(invalid);

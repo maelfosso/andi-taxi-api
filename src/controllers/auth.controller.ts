@@ -134,6 +134,12 @@ export const signIn = async (req: Request, res: Response) => {
     throw new BadRequestError(`No user with this phone number`);
   }
 
+  try {
+    await UserCode.deleteMany({ phoneNumber })
+  } catch (err) {
+    throw new DatabaseError(`error when deleting the user code`);
+  }
+
   const code = makeCode(4);
   const d = new Date();
   d.setSeconds(d.getSeconds() + 60);
@@ -176,10 +182,10 @@ export const signCode = async (req: Request, res: Response) => {
     throw new BadRequestError(`Code doesn't match`);
   }
 
-  if (existingUserCode.expiredAt.getTime() < Date.now()) {
-    console.log('Code has expired ', existingUserCode.expiredAt, new Date());
-    throw new BadRequestError(`Code has expired`)
-  }
+  // if (existingUserCode.expiredAt.getTime() < Date.now()) {
+  //   console.log('Code has expired ', existingUserCode.expiredAt, new Date());
+  //   throw new BadRequestError(`Code has expired`)
+  // }
 
   let user = {
     id: existingUser.id,
@@ -205,7 +211,9 @@ export const signCode = async (req: Request, res: Response) => {
 
   return res.status(200).json({
     user,
-    ...driver?.toJSON(),
+    driver: {
+      ...driver?.toJSON(),
+    },
     token
   });
 } 

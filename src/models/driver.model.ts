@@ -2,7 +2,7 @@ import mongoose, { Schema, Types } from 'mongoose';
 
 interface Car {
   registrationNumber: string,
-  class: string,
+  model: string,
   photos?: string[]
 };
 
@@ -44,7 +44,7 @@ const DriverSchema = new Schema({
       type: String,
       required: true
     },
-    class : {
+    model : {
       type: String,
       enum: ['Berline', 'Crossover', 'Minivan', 'Jeep', 'Limousine'],
       required: true

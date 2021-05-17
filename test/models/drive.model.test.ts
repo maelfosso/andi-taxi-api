@@ -38,7 +38,7 @@ describe("Test about Driver model", () => {
       realResidenceAddress: faker.address.streetAddress(),
       car: {
         registrationNumber: faker.random.alphaNumeric(7),
-        class: 'Berline'
+        model: 'Berline'
       },
       user: new mongoose.Types.ObjectId()
     });
@@ -65,7 +65,7 @@ describe("Test about Driver model", () => {
     expect(error?.errors['residenceAddress']).toBeDefined();
     expect(error?.errors['realResidenceAddress']).toBeDefined();
     expect(error?.errors['car.registrationNumber']).toBeDefined();
-    expect(error?.errors['car.class']).toBeDefined();
+    expect(error?.errors['car.model']).toBeDefined();
 
   });
 });
