@@ -209,11 +209,14 @@ export const signCode = async (req: Request, res: Response) => {
     throw new DatabaseError(`error when deleting the user code`);
   }
 
-  return res.status(200).json({
+  const data = {
     user,
     driver: {
       ...driver?.toJSON(),
     },
     token
-  });
+  };
+  console.log('Data ', data);
+
+  return res.status(200).json(data);
 } 
