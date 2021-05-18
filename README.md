@@ -36,6 +36,11 @@ Run `docker-compose up` to start the server
 
 - `yarn test`
 
+## Features updated
+
+### Sending SMS
+
+To send the SMS, update the code into [auth.controller.ts](./src/controllers/auth.controller.ts)
 
 ## Authors
 

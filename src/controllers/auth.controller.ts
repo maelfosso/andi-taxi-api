@@ -150,6 +150,11 @@ export const signIn = async (req: Request, res: Response) => {
     throw new DatabaseError(`error when saving user code ${userCode}`);
   }
 
+  /**
+   * ADD THE CODE HERE FOR SENDING CODE BY SMS
+   * sendCodeBySMS(userCode.phoneNumber, userCode.code)
+   */
+  
   return res.status(201).json({ ...userCode.toJSON() });
 }
 
