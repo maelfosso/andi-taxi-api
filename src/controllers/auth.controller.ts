@@ -22,6 +22,10 @@ function makeCode(length: number) {
   return result.join('');
 }
 
+async function sendSMS(phoneNumber: string, code: string) {
+  return true;
+}
+
 export const signUpClient = async (req: Request, res: Response) => {
   const { name, phoneNumber } = req.body;
 
@@ -52,6 +56,12 @@ export const signUpClient = async (req: Request, res: Response) => {
   } catch (err) {
     throw new DatabaseError(`error when saving user code ${userCode}: ${err}`);
   }
+
+  /**
+   * ADD THE CODE HERE FOR SENDING CODE BY SMS
+   * sendCodeBySMS(userCode.phoneNumber, userCode.code)
+   */
+  await sendSMS(userCode.phoneNumber, userCode.code);
 
   return res.status(201).json({ ...userCode.toJSON() });
 }
@@ -118,6 +128,12 @@ export const signUpDriver = async (req: Request, res: Response) => {
     throw new DatabaseError(`error when saving user code ${userCode}: ${err}`);
   }
 
+  /**
+   * ADD THE CODE HERE FOR SENDING CODE BY SMS
+   * sendCodeBySMS(userCode.phoneNumber, userCode.code)
+   */
+  await sendSMS(userCode.phoneNumber, userCode.code);
+
   return res.status(201).json({ ...userCode.toJSON() });
 }
 
@@ -154,7 +170,8 @@ export const signIn = async (req: Request, res: Response) => {
    * ADD THE CODE HERE FOR SENDING CODE BY SMS
    * sendCodeBySMS(userCode.phoneNumber, userCode.code)
    */
-  
+  await sendSMS(userCode.phoneNumber, userCode.code);
+
   return res.status(201).json({ ...userCode.toJSON() });
 }
 
