@@ -42,6 +42,8 @@ Run `docker-compose up` to start the server
 
 To send the SMS, update the code into [auth.controller.ts](./src/controllers/auth.controller.ts)
 
+Specifically update the method `sendSMS(phoneNumber: string, code: string)`
+
 ## Authors
 
 - GitHub: [@maelfosso](https://github.com/maelfosso)
