@@ -5,6 +5,7 @@ import { authRouter } from './routes/auth.route';
 import { errorHandler } from './middlewares/error-handler';
 import morgan from 'morgan';
 import { NotFoundError } from './errors/not-found-error';
+import { bookingTaxiRouter } from './routes/booking-taxi.route';
 import { currentUser } from './middlewares/current-user';
 
 const app: Application = express();
@@ -25,6 +26,7 @@ app.get(
 app.use(currentUser);
 
 app.use(authRouter);
+app.use(bookingTaxiRouter);
 app.use(errorHandler);
 
 app.all('*', async (req:Request, res:Response) => {

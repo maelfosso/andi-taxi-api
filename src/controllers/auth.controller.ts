@@ -7,7 +7,7 @@ import { User, UserAttributes } from "../models/user.model";
 import { Car, Driver, DriverAttributes } from "../models/driver.model";
 import { UserPayload } from '../models/user-payload';
 
-const { JWT_PRIVATE_KEY } = process.env;
+const { JWT_KEY } = process.env;
 
 function makeCode(length: number) {
   var result           = [];
@@ -224,7 +224,7 @@ export const signCode = async (req: Request, res: Response) => {
     throw new DatabaseError(`error when fetching driving `);
   }
 
-  const token = jwt.sign(user, JWT_PRIVATE_KEY!);
+  const token = jwt.sign(user, JWT_KEY!);
 
   try {
     await UserCode.findOneAndDelete({ phoneNumber })
