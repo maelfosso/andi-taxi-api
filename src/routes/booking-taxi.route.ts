@@ -2,17 +2,20 @@ import express from 'express';
 import { body } from 'express-validator';
 
 import * as bookingTaxi from '../controllers/booking';
+import { requireAuth } from '../middlewares/required-auth';
 import { validateRequest } from '../middlewares/validate-request';
 
 const router = express.Router();
 
 router.get(
   '/api/booking/last-locations', 
+  requireAuth,
   bookingTaxi.getLastLocations
 );
 
 router.post(
-  '/api/booking/cost-time', 
+  '/api/booking/cost-time',
+  requireAuth,
   [
     body('from')
       .notEmpty()
@@ -29,12 +32,14 @@ router.post(
 );
 
 router.get(
-  '/api/booking/payment-methods',
+  '/api/booking/payment-methods-used',
+  requireAuth,
   bookingTaxi.getPaymentMethodsUsed
 );
 
 router.post(
   '/api/booking/taxi-around', 
+  requireAuth,
   [
     body('position')
       .notEmpty()
