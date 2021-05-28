@@ -12,7 +12,7 @@ router.get(
 );
 
 router.post(
-  '/api/booking/cost', 
+  '/api/booking/cost-time', 
   [
     body('from')
       .notEmpty()
@@ -25,7 +25,7 @@ router.post(
       .withMessage('Distance between the two point must be provided')
   ],
   validateRequest,
-  bookingTaxi.calculateTravelCost
+  bookingTaxi.calculateTravelCostTime
 );
 
 router.get(
