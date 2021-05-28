@@ -5,6 +5,7 @@ import { DatabaseError } from "../errors/database-error";
 import { UserCode } from "../models/user-code.model";
 import { User, UserAttributes } from "../models/user.model";
 import { Car, Driver, DriverAttributes } from "../models/driver.model";
+import { UserPayload } from '../models/user-payload';
 
 const { JWT_PRIVATE_KEY } = process.env;
 
