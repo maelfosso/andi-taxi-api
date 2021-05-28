@@ -83,10 +83,15 @@ const TravelSchema = new Schema({
 
   status: {
     type: String,
-    enum: ['Pending', 'Canceled', 'In Progress', 'Done']
+    enum: ['Pending', 'Canceled', 'Took', 'In Progress', 'Done'],
+    default: 'Pending'
   },
 
   tookAt: {
+    type: Date
+  },
+
+  startedAt: {
     type: Date
   },
 
