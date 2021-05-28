@@ -1,4 +1,9 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose, { Schema, Types } from 'mongoose';
+
+interface Location {
+  longitude: number;
+  latitude: number;
+};
 
 const LocationSchema = new Schema({
   longitude: {
@@ -10,6 +15,32 @@ const LocationSchema = new Schema({
     required: true
   }
 });
+
+interface TravelAttributes {
+  from: Location;
+  to: Location;
+  cost: number;
+  distance: number;
+  carType: string;
+  status: string;
+  orderedBy: Types.ObjectId;
+  drivedBy?: Types.ObjectId;
+}
+
+interface TravelModel extends mongoose.Model<TravelDocument> {
+  build(attrs: TravelAttributes): TravelDocument;
+}
+
+interface TravelDocument extends mongoose.Document {
+  from: Location;
+  to: Location;
+  cost: number;
+  distance: number;
+  carType: string;
+  status: string;
+  orderedBy: Types.ObjectId;
+  drivedBy?: Types.ObjectId;
+}
 
 const TravelSchema = new Schema({
 
@@ -23,7 +54,7 @@ const TravelSchema = new Schema({
     required: true
   },
 
-  createdBy: {
+  orderedBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
@@ -55,11 +86,21 @@ const TravelSchema = new Schema({
     enum: ['Pending', 'Canceled', 'In Progress', 'Done']
   },
 
+  tookAt: {
+    type: Date
+  },
+
   createdAt: {
     type: Date,
     default: Date.now
   },
 
+}, { strict: false });
 
+const Travel = mongoose.model<TravelDocument, TravelModel>('Travel', TravelSchema);
 
-})
+TravelSchema.statics.build = (attrs: TravelAttributes) => {
+  return new Travel(attrs);
+}
+
+export { Location, Travel, TravelDocument, TravelAttributes };
