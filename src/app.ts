@@ -5,6 +5,7 @@ import { authRouter } from './routes/auth.route';
 import { errorHandler } from './middlewares/error-handler';
 import morgan from 'morgan';
 import { NotFoundError } from './errors/not-found-error';
+import { currentUser } from './middlewares/current-user';
 
 const app: Application = express();
 app.use(express.json());
@@ -20,6 +21,8 @@ app.get(
     });
   }
 );
+
+app.use(currentUser);
 
 app.use(authRouter);
 app.use(errorHandler);

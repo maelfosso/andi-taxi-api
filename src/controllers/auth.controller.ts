@@ -209,7 +209,7 @@ export const signCode = async (req: Request, res: Response) => {
   //   throw new BadRequestError(`Code has expired`)
   // }
 
-  let user = {
+  let user: UserPayload = {
     id: existingUser.id,
     name: existingUser.name,
     phoneNumber
