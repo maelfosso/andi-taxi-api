@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from 'jsonwebtoken';
+import axios from 'axios';
 import { BadRequestError } from "../errors/bad-request-error";
 import { DatabaseError } from "../errors/database-error";
 import { UserCode } from "../models/user-code.model";
@@ -24,7 +25,17 @@ function makeCode(length: number) {
 }
 
 async function sendSMS(phoneNumber: string, code: string) {
-  return true;
+  const response = await axios.get(
+    `https://api.mobizon.kz/service/messsage/sendsmsmessage?recipient=${phoneNumber}+&from=text=${code}`,
+    { 
+      params: {
+        api_key: 'kzc70d8798773efeb211f880f8e6df7c78aadd934eab120',
+        data: Date.now()
+      }
+    }
+  )
+
+  return response.data;
 }
 
 export const signUpClient = async (req: Request, res: Response) => {
